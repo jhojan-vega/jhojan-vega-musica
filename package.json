@@ -1,0 +1,13 @@
+{
+  "name": "jhojan-vega-musica",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": ["apps/*", "services/*", "packages/*"],
+  "scripts": {
+    "dev": "npm run dev --workspace=@jhojan/public-web",
+    "dev:admin": "npm run dev --workspace=@jhojan/admin-web",
+    "dev:api": "npm run dev --workspace=@jhojan/api",
+    "build": "npm run build --workspaces --if-present"
+  },
+  "engines": { "node": ">=22.0.0", "npm": ">=10.0.0" }
+}

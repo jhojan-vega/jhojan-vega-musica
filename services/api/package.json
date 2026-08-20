@@ -1,0 +1,8 @@
+{
+  "name": "@jhojan/api",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": { "dev": "tsx watch src/server.ts", "build": "tsc -p tsconfig.json", "start": "node dist/server.js" },
+  "dependencies": { "fastify": "latest" },
+  "devDependencies": { "@types/node": "latest", "tsx": "latest", "typescript": "latest" }
+}
