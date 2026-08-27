@@ -1,0 +1,1 @@
+export function Historias() { return <main><h1>Historias</h1></main> }

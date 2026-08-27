@@ -1,0 +1,1 @@
+export function Reels() { return <main><h1>Reels en vivo</h1></main> }
