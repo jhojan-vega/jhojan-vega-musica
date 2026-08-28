@@ -53,7 +53,7 @@ export function Audios() {
     <main className="audios-page">
       <section className="section">
         <div className="heading">
-          <p><b>01</b> AUDIOS PARA SENTIR</p>
+          
           <h1>Mi música</h1>
           <span>
             Escucha una selección de canciones de Jhojan Vega.

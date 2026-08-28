@@ -70,7 +70,15 @@ footer,
     display: grid;
     width: 176px;
     padding-top: 19px;
-    line-height: .7;
+    line-height: 0;
+}
+
+.brand img {
+    display: block;
+    width: 176px;
+    height: auto;
+    max-width: 100%;
+    object-fit: contain;
 }
 
 .brand span {
@@ -124,62 +132,82 @@ footer,
 
 .mini-socials {
     display: flex;
-    gap: 7px;
+    align-items: flex-start;
+    gap: 34px;
+
     padding-left: 8px;
+
     border-left: 1px solid #ffffff2c;
 }
 
-.mini-socials button,
-footer button {
+.social-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 3px;
+}
+
+.social-item a {
     display: grid;
     place-items: center;
-    width: 34px;
-    height: 34px;
-    padding: 6px;
-    border: 0;
-    background: none;
-    color: #eae3f5;
-}
 
-.mini-socials button svg {
-    width: 28px;
-    height: 28px;
-}
+    width: 37px;
+    height: 37px;
 
-.mini-socials button[aria-label="Instagram"] {
-    color: #E1306C;
-}
+    padding: 2px;
 
-.mini-socials button[aria-label="YouTube"] {
-    color: #FF0000;
-}
+    border: 1px solid #9b5de5;
+    border-radius: 50%;
 
-.mini-socials button[aria-label="Facebook"] {
-    color: #1877F2;
-}
+    background: #171020;
 
-.mini-socials button[aria-label="TikTok"] {
     color: #ffffff;
+
+    transition:
+        transform .25s ease,
+        border-color .25s ease,
+        box-shadow .25s ease;
 }
 
-footer button svg {
+.social-item a svg {
     width: 28px;
     height: 28px;
+
+    stroke-width: 1.5;
 }
 
-footer button[aria-label="Instagram"] {
-    color: #E1306C;
+.social-item span {
+    color: #cbbbd8;
+
+    font-size: 8px;
+    font-weight: 500;
+
+    letter-spacing: .3px;
+
+    white-space: nowrap;
 }
 
-footer button[aria-label="YouTube"] {
-    color: #FF0000;
+.social-item a:hover {
+    transform: translateY(-2px);
+
+    border-color: #c77dff;
+
+    box-shadow:
+        0 0 10px #b45bff66,
+        0 0 18px #8d4dcc33;
 }
 
-footer button[aria-label="Facebook"] {
-    color: #1877F2;
+footer aside a svg {
+    width: 33px;
+    height: 33px;
 }
 
-footer button[aria-label="TikTok"] {
+footer aside a[aria-label="TikTok"],
+footer aside a[aria-label="YouTube"],
+footer aside a[aria-label="Instagram"],
+footer aside a[aria-label="Facebook"],
+footer aside a[aria-label="Spotify"] {
     color: #ffffff;
 }
 
@@ -305,7 +333,7 @@ footer button[aria-label="TikTok"] {
     top: 50%;
     width: 259px;
     aspect-ratio: 1;
-    transform: translateY(-38%); 
+    transform: translateY(-38%);
     border: 1px solid #ffffff88;
     border-radius: 50%;
     overflow: hidden;
@@ -583,7 +611,7 @@ footer button[aria-label="TikTok"] {
     }
 }
 
-.progress > div {
+.progress>div {
     height: 100%;
     background: #bd72f5;
     transition: width .2s linear;
@@ -695,7 +723,7 @@ footer button[aria-label="TikTok"] {
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
-} 
+}
 
 .video:before {
     content: '';
@@ -787,6 +815,7 @@ footer button[aria-label="TikTok"] {
     overflow: hidden;
     background: #110c18;
 }
+
 .reel:before,
 .reel:after {
     display: none;
@@ -855,27 +884,72 @@ footer {
     gap: 30px;
 }
 
-footer>div {
-    padding-left: 20px;
-
-    border-left: 1px solid #392d45;
-
-    font-size: 11px;
-}
-
-footer>div span {
-    display: block;
-
-    margin-top: 5px;
-
-    color: #8d8397;
-    font-size: 9px;
-}
-
 footer aside {
+    margin-left: auto;
+    margin-right: 50px;
+}
+
+.footer-socials {
     display: flex;
+    align-items: flex-start;
+    gap: 22px;
+}
+
+.social-link {
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 5px;
+    gap: 8px;
+
+    min-width: 62px;
+}
+
+.social-link a {
+    display: grid;
+    place-items: center;
+
+    width: 58px;
+    height: 58px;
+
+    border: 1px solid #9b5de5;
+    border-radius: 50%;
+
+    background:
+        radial-gradient(circle at 35% 30%,
+            #3a2050,
+            #171020 70%);
+
+    color: #c77dff;
+
+    box-shadow:
+        0 0 10px #8d4dcc35,
+        inset 0 0 14px #b45bff18;
+
+    transition:
+        transform .25s ease,
+        border-color .25s ease,
+        box-shadow .25s ease;
+}
+
+.social-link a:hover {
+    transform: translateY(-4px);
+
+    border-color: #d39aff;
+
+    box-shadow:
+        0 0 18px #b45bff66,
+        0 0 30px #8d4dcc44;
+}
+
+.social-link span {
+    color: #cbbbd8;
+
+    font-size: 10px;
+    font-weight: 500;
+
+    letter-spacing: .6px;
+
+    white-space: nowrap;
 }
 
 .whatsapp-float {
@@ -883,6 +957,10 @@ footer aside {
     right: 24px;
     bottom: 24px;
     z-index: 1000;
+}
+
+.whatsapp-float.footer-visible {
+    transform: translateY(-100px);
 }
 
 .whatsapp-float button {
@@ -1147,7 +1225,7 @@ footer aside {
     .nav,
     footer,
     .section {
-        width: calc(100% - 32px);
+        width: calc(100% - 32px); 
     }
 
     .hero,
@@ -1241,6 +1319,43 @@ footer aside {
 
     .stories h2 {
         font-size: 30px;
+    }
+
+        .footer-socials {
+        width: 100%;
+
+        justify-content: center;
+
+        gap: 14px;
+
+        margin: 20px 0 0;
+    }
+
+    .social-link {
+        min-width: 54px;
+        gap: 6px;
+    }
+
+    .social-link a {
+        width: 50px;
+        height: 50px;
+    }
+
+    .social-link span {
+        font-size: 9px;
+    }
+
+    footer aside a[aria-label="TikTok"] svg {
+        width: 34px;
+        height: 34px;
+    }
+
+    footer aside a[aria-label="YouTube"] svg,
+    footer aside a[aria-label="Instagram"] svg,
+    footer aside a[aria-label="Facebook"] svg,
+    footer aside a[aria-label="Spotify"] svg {
+        width: 30px;
+        height: 30px;
     }
 }
 
@@ -1389,12 +1504,13 @@ footer aside {
         margin-bottom: 14px;
     }
 
-    
+
     .home-page .band {
         padding-top: 34px;
         padding-bottom: 34px;
     }
 }
+
 /* Ajuste final del Hero del Home */
 .home-page .hero {
     min-height: 390px;
@@ -1462,17 +1578,17 @@ footer aside {
 }
 
 /* Miniatura e iframe ocupan todo el recuadro */
-.home-page .video > img,
-.home-page .video > iframe {
+.home-page .video>img,
+.home-page .video>iframe {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
     border: 0;
-} 
+}
 
-.home-page .reel > video {
+.home-page .reel>video {
     position: absolute;
     inset: 0;
     width: 100%;
@@ -1480,4 +1596,12 @@ footer aside {
     display: block;
     object-fit: contain;
     background: #000;
+}
+
+/* PRUEBA HEADER GLOBAL */
+header {
+    display: block;
+    visibility: visible;
+    opacity: 1;
+    z-index: 9999;
 }

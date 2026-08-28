@@ -1,1 +1,1 @@
-export function Videos() { return <main><h1>Videos</h1></main> }
+export function Videos() { return <main></main> }

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 
 type IconName =
   | 'arrow' | 'menu' | 'close' | 'music'
-  | 'video' | 'instagram' | 'youtube' | 'facebook' | 'tiktok' | 'whatsapp'
+  | 'video' | 'instagram' | 'youtube' | 'facebook' | 'tiktok' | 'spotify' | 'whatsapp'
   | 'play' | 'pause'
 
 function Icon({ name }: { name: IconName }) {
@@ -18,6 +18,35 @@ function Icon({ name }: { name: IconName }) {
     youtube: <><path d="M21 12s0-4-1-5-3-1-8-1-7 0-8 1-1 5-1 5 0 4 1 5 3 1 8 1 7-1 8-1 1-5 1-5Z" /><path d="m10 9 5 3-5 3V9Z" fill="currentColor" stroke="none" /></>,
     facebook: <path d="M14 21v-8h3l.5-3H14V8.2c0-.9.3-1.5 1.6-1.5H18V4a31 31 0 0 0-2.2-.1c-2.2 0-3.7 1.3-3.7 3.8V10H9v3h3v8h2Z" fill="currentColor" stroke="none" />,
     tiktok: <path d="M15 4c.4 2.1 1.6 3.4 3.7 3.5v3.1c-1.5 0-2.8-.4-3.8-1.1v5.8c0 3.5-2.4 5.8-5.7 5.8A5.3 5.3 0 0 1 4 15.8c0-3.1 2.5-5.6 5.7-5.6.3 0 .6 0 .9.1v3.2a2.5 2.5 0 0 0-.9-.2 2.5 2.5 0 1 0 2.5 2.5V4H15Z" fill="currentColor" stroke="none" />,
+    spotify: (
+      <>
+        <circle cx="12" cy="12" r="9" fill="currentColor" stroke="none" />
+
+        <path
+          d="M7 9.5c3.6-1.1 7.2-.8 10.2.8"
+          fill="none"
+          stroke="#090611"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+        />
+
+        <path
+          d="M7.5 12.2c3-.8 6.1-.5 8.8.8"
+          fill="none"
+          stroke="#090611"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+        />
+
+        <path
+          d="M8.2 14.8c2.3-.5 4.6-.3 6.7.7"
+          fill="none"
+          stroke="#090611"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+        />
+      </>
+    ),
     whatsapp: <path d="M12 3a9 9 0 0 0-7.8 13.5L3 21l4.7-1.2A9 9 0 1 0 12 3Zm0 16a7 7 0 0 1-3.6-1l-.3-.2-2.8.7.8-2.7-.2-.3A7 7 0 1 1 12 19Zm3.8-5.2c-.2-.1-1.3-.7-1.5-.8-.2-.1-.4-.1-.5.1-.2.2-.5.8-.6.9-.1.2-.3.2-.5.1-1.4-.7-2.4-1.3-3.4-2.8-.2-.3.2-.3.7-1.1.1-.2.1-.3 0-.5s-.5-1.2-.7-1.6c-.2-.4-.4-.3-.5-.3h-.4c-.2 0-.5.1-.7.3-.2.2-.8.8-.8 1.9s.8 2.2.9 2.3c.1.2 1.6 2.5 3.9 3.5 1.4.6 1.4.4 1.7.4.5 0 1.5-.6 1.7-1.1.2-.5.2-.9.1-1Z" fill="currentColor" stroke="none" />
   }
 
@@ -33,9 +62,7 @@ function Icon({ name }: { name: IconName }) {
 function Brand() {
   return (
     <a className="brand" href="/">
-      <i />
-      <span>Jhojan Vega</span>
-      <small>MÚSICA</small>
+      <img src="/images/MARCA.png" alt="Jhojan Vega Música" />
     </a>
   )
 }
@@ -75,12 +102,32 @@ const reels = [
 ]
 
 export function Home() {
-  const [menu, setMenu] = useState(false)
+
   const [playing, setPlaying] = useState<string | null>(null)
   const player = useRef<HTMLAudioElement | null>(null)
   const [videoPlaying, setVideoPlaying] = useState<string | null>(null)
   const reelPlayers = useRef<Record<string, HTMLVideoElement | null>>({})
   const [reelPlaying, setReelPlaying] = useState<string | null>(null)
+  const [footerVisible, setFooterVisible] = useState(false)
+
+    useEffect(() => {
+    const footer = document.getElementById('contacto')
+
+    if (!footer) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setFooterVisible(entry.isIntersecting)
+      },
+      {
+        threshold: 0.1
+      }
+    )
+
+    observer.observe(footer)
+
+    return () => observer.disconnect()
+  }, [])
 
   const toggle = async (audio: typeof audios[number]) => {
     if (playing === audio.title) {
@@ -131,45 +178,10 @@ export function Home() {
 
   }
 
-  const nav = [
-    ['Inicio', '/'],
-    ['Audios', '/audios'],
-    ['Videos', '/videos'],
-    ['Reels en vivo', '/reels'],
-    ['Historias', '/historias'],
-    ['Contacto', '/#contacto']
-  ]
+
 
   return (
     <main className="home-page">
-      <header>
-        <div className="nav">
-          <Brand />
-
-          <button
-            className="menu"
-            onClick={() => setMenu(!menu)}
-            aria-label="Abrir menú"
-          >
-            <Icon name={menu ? 'close' : 'menu'} />
-          </button>
-
-          <nav className={menu ? 'open' : ''}>
-            {nav.map(([name, link]) => (
-              <a href={link} key={name} onClick={() => setMenu(false)}>
-                {name}
-              </a>
-            ))}
-
-            <div className="mini-socials">
-              <button aria-label="Instagram"><Icon name="instagram" /></button>
-              <button aria-label="YouTube"><Icon name="youtube" /></button>
-              <button aria-label="Facebook"><Icon name="facebook" /></button>
-              <button aria-label="TikTok"><Icon name="tiktok" /></button>
-            </div>
-          </nav>
-        </div>
-      </header>
 
       <section className="hero">
         <div className="copy">
@@ -338,20 +350,73 @@ export function Home() {
       <footer id="contacto">
         <Brand />
 
-        <div>
-          <b>Jhojan Vega Música</b>
-          <span>Contenido y enlaces oficiales.</span>
-        </div>
 
-        <aside>
-          <button aria-label="YouTube"><Icon name="youtube" /></button>
-          <button aria-label="Instagram"><Icon name="instagram" /></button>
-          <button aria-label="Facebook"><Icon name="facebook" /></button>
-          <button aria-label="TikTok"><Icon name="tiktok" /></button>
+        <aside className="footer-socials">
+
+          <div className="social-link">
+            <a
+              href="https://www.tiktok.com/@jhojan_vega_musica"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="TikTok"
+            >
+              <Icon name="tiktok" />
+            </a>
+            <span>TikTok</span>
+          </div>
+
+          <div className="social-link">
+            <a
+              href="https://www.youtube.com/@jhojanvegamusica"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="YouTube"
+            >
+              <Icon name="youtube" />
+            </a>
+            <span>YouTube</span>
+          </div>
+
+          <div className="social-link">
+            <a
+              href="https://www.instagram.com/jhojanvega_compositor/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram"
+            >
+              <Icon name="instagram" />
+            </a>
+            <span>Instagram</span>
+          </div>
+
+          <div className="social-link">
+            <a
+              href="https://www.facebook.com/dinastiiavallenata"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Facebook"
+            >
+              <Icon name="facebook" />
+            </a>
+            <span>Facebook</span>
+          </div>
+
+          <div className="social-link">
+            <a
+              href="https://open.spotify.com/intl-es/artist/3WGop7cjVVkwnfoWBz0e5O"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Spotify"
+            >
+              <Icon name="spotify" />
+            </a>
+            <span>Spotify</span>
+          </div>
+
         </aside>
 
       </footer>
-      <div className="whatsapp-float">
+      <div className={`whatsapp-float ${footerVisible ? 'footer-visible' : ''}`}>
         <button aria-label="WhatsApp">
           <Icon name="whatsapp" />
         </button>
