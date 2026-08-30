@@ -7,3 +7,17 @@ infra/docker/media/initial/public/*/*
 !infra/docker/media/initial/public/images/.gitkeep
 !infra/docker/media/initial/public/mp3/.gitkeep
 !infra/docker/media/initial/public/reels/.gitkeep
+
+# Multimedia pesada servida mediante volumen Docker
+apps/public-web/public/media/
+
+# Copias de seguridad locales
+*.backup
+*.backup.*
+*.before-*.css
+*.approved-design-backup.*
+
+# Archivos generados por TypeScript/Vite
+*.tsbuildinfo
+apps/public-web/vite.config.js
+apps/public-web/vite.config.d.ts

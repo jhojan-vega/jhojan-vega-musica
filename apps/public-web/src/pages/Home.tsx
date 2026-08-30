@@ -96,19 +96,74 @@ const reels = [
   { title: 'DESPECHO', file: '/media/reels/01 DESPECHO.mp4', cover: '/media/reels/covers/01.jpg' },
   { title: 'VALLENATO', file: '/media/reels/02 VALLENATO.mp4', cover: '/media/reels/covers/02.jpg' },
   { title: 'VALLENATO MIX', file: '/media/reels/03 VALLENATO MIX.mp4', cover: '/media/reels/covers/03.jpg' },
-  { title: 'VALLENATO', file: '/media/reels/04 VALLENATO.mp4', cover: '/media/reels/covers/04.jpg' },
   { title: 'CATALOGO', file: '/media/reels/05 CATALOGO.mp4', cover: '/media/reels/covers/05.jpg' },
+  { title: 'VALLENATO', file: '/media/reels/04 VALLENATO.mp4', cover: '/media/reels/covers/04.jpg' },
   { title: 'DISCOTECA', file: '/media/reels/06 DISCOTECA.mp4', cover: '/media/reels/covers/06.jpg' }
 ]
+
+type YouTubePlayer = { destroy: () => void }
+type YouTubeApi = {
+  Player: new (element: string | HTMLElement, options: {
+    videoId: string
+    playerVars: Record<string, number>
+    events: { onStateChange: (event: { data: number }) => void }
+  }) => YouTubePlayer
+  PlayerState: { PLAYING: number }
+}
+
+let youtubeApiPromise: Promise<YouTubeApi> | null = null
+
+function loadYouTubeApi() {
+  if (youtubeApiPromise) return youtubeApiPromise
+
+  youtubeApiPromise = new Promise((resolve, reject) => {
+    const youtubeWindow = window as Window & {
+      YT?: YouTubeApi
+      onYouTubeIframeAPIReady?: () => void
+    }
+
+    if (youtubeWindow.YT?.Player) {
+      resolve(youtubeWindow.YT)
+      return
+    }
+
+    youtubeWindow.onYouTubeIframeAPIReady = () => {
+      if (youtubeWindow.YT) resolve(youtubeWindow.YT)
+    }
+
+    const script = document.createElement('script')
+    script.src = 'https://www.youtube.com/iframe_api'
+    script.async = true
+    script.onerror = () => {
+      youtubeApiPromise = null
+      reject(new Error('No se pudo cargar la API de YouTube'))
+    }
+    document.head.appendChild(script)
+  })
+
+  return youtubeApiPromise
+}
 
 export function Home() {
 
   const [playing, setPlaying] = useState<string | null>(null)
   const player = useRef<HTMLAudioElement | null>(null)
   const [videoPlaying, setVideoPlaying] = useState<string | null>(null)
+  const [videoReady, setVideoReady] = useState(false)
+  const youtubePlayer = useRef<YouTubePlayer | null>(null)
+  const youtubeContainer = useRef<HTMLDivElement | null>(null)
   const reelPlayers = useRef<Record<string, HTMLVideoElement | null>>({})
   const [reelPlaying, setReelPlaying] = useState<string | null>(null)
   const [footerVisible, setFooterVisible] = useState(false)
+
+  const stopReels = () => {
+    Object.values(reelPlayers.current).forEach((video) => {
+      if (video) {
+        video.pause()
+      }
+    })
+    setReelPlaying(null)
+  }
 
     useEffect(() => {
     const footer = document.getElementById('contacto')
@@ -137,6 +192,9 @@ export function Home() {
     }
 
     player.current?.pause()
+    stopReels()
+    setVideoPlaying(null)
+    setVideoReady(false)
 
     const nextPlayer = new Audio()
     nextPlayer.src = audio.file
@@ -159,18 +217,24 @@ export function Home() {
   const toggleReel = (reel: typeof reels[number]) => {
     const current = reelPlayers.current[reel.file]
 
+    player.current?.pause()
+    setPlaying(null)
+    setVideoPlaying(null)
+    setVideoReady(false)
+
     Object.values(reelPlayers.current).forEach((video) => {
       if (video && video !== current) {
         video.pause()
-        video.currentTime = 0
       }
     })
 
     if (!current) return
 
     if (current.paused) {
-      current.play()
-      setReelPlaying(reel.file)
+      void current.play().catch((error) => {
+        console.error('No se pudo reproducir el reel:', error)
+        setReelPlaying(null)
+      })
     } else {
       current.pause()
       setReelPlaying(null)
@@ -178,15 +242,58 @@ export function Home() {
 
   }
 
+  const playVideo = (video: typeof videos[number]) => {
+    player.current?.pause()
+    setPlaying(null)
+    stopReels()
+    setVideoReady(false)
+    setVideoPlaying(video.youtube)
+  }
+
+  useEffect(() => {
+    if (!videoPlaying) return
+
+    const currentVideo = videos.find((video) => video.youtube === videoPlaying)
+    if (!currentVideo) return
+
+    const playerId = `youtube-player-${videos.indexOf(currentVideo)}`
+    const target = document.createElement('div')
+    target.id = playerId
+    youtubeContainer.current?.appendChild(target)
+    let cancelled = false
+
+    void loadYouTubeApi()
+      .then((YT) => {
+        if (cancelled) return
+
+        youtubePlayer.current = new YT.Player(target, {
+          videoId: currentVideo.youtube.split('/').pop() ?? '',
+          playerVars: { autoplay: 1, rel: 0 },
+          events: {
+            onStateChange: ({ data }) => {
+              if (data === YT.PlayerState.PLAYING) setVideoReady(true)
+            }
+          }
+        })
+      })
+      .catch((error) => console.error('No se pudo iniciar el video:', error))
+
+    return () => {
+      cancelled = true
+      youtubePlayer.current?.destroy()
+      youtubePlayer.current = null
+      target.remove()
+    }
+  }, [videoPlaying])
+
 
 
   return (
     <main className="home-page">
+      <div className="home-musical-pattern" aria-hidden="true" />
 
       <section className="hero">
         <div className="copy">
-          <p className="eyebrow">MÚSICA · JHOJAN VEGA</p>
-
           <h1>
             Jhojan Vega <em>Música</em>
           </h1>
@@ -237,6 +344,7 @@ export function Home() {
               </div>
 
               <button
+                type="button"
                 onClick={() => toggle(audio)}
                 aria-label={playing === audio.title ? 'Pausar' : 'Reproducir'}
               >
@@ -246,8 +354,9 @@ export function Home() {
           ))}
         </div>
 
-        <a className="text-link" href="/audios">
-          Ver los 12 audios
+        <a className="outline" href="/audios">
+          <span className="audios-link-desktop">Más Audios</span>
+          <span className="audios-link-mobile">Más Canciones</span>
           <Icon name="arrow" />
         </a>
       </section>
@@ -264,24 +373,22 @@ export function Home() {
                 className={`visual video video-home-${i + 1}`}
               >
                 {videoPlaying === video.youtube ? (
-                  <iframe
-                    src={`https://www.youtube.com/embed/${video.youtube.split('/').pop()}?autoplay=1&rel=0`}
-                    title={video.title}
-                    allow="autoplay; encrypted-media; picture-in-picture"
-                    allowFullScreen
-                  />
+                  <>
+                    <div className="youtube-player" ref={youtubeContainer} aria-label={`Reproductor de ${video.title}`} />
+                    <div className={`video-loading-cover ${videoReady ? 'ready' : ''}`} aria-hidden="true">
+                      <img src={video.thumbnail} alt="" />
+                      <span className="media-control"><Icon name="play" /></span>
+                    </div>
+                  </>
                 ) : (
                   <>
-                    <img
-                      src={video.thumbnail}
-                      alt={video.title}
-                    />
-
                     <button
-                      onClick={() => setVideoPlaying(video.youtube)}
+                      type="button"
+                      onClick={() => playVideo(video)}
                       aria-label={`Reproducir ${video.title}`}
                     >
-                      <Icon name="play" />
+                      <img src={video.thumbnail} alt="" loading="lazy" />
+                      <span className="media-control"><Icon name="play" /></span>
                     </button>
 
                     <small>VIDEO</small>
@@ -294,7 +401,8 @@ export function Home() {
         </div>
 
         <a className="outline" href="/videos">
-          Ver los 6 videos
+          <span className="videos-link-desktop">Más Videos</span>
+          <span className="videos-link-mobile">Más Videos</span>
           <Icon name="arrow" />
         </a>
       </section>
@@ -314,7 +422,7 @@ export function Home() {
                   }}
                   poster={reel.cover}
                   src={reel.file}
-                  preload="metadata"
+                  preload="none"
                   playsInline
                   onPlay={() => setReelPlaying(reel.file)}
                   onPause={() => {
@@ -324,10 +432,11 @@ export function Home() {
                   }}
                 />
                 <button
+                  type="button"
                   onClick={() => toggleReel(reel)}
                   aria-label={reelPlaying === reel.file ? 'Pausar' : 'Reproducir'}
                 >
-                  <Icon name={reelPlaying === reel.file ? 'pause' : 'play'} />
+                  <span className="media-control"><Icon name={reelPlaying === reel.file ? 'pause' : 'play'} /></span>
                 </button>
                 <small>EN VIVO</small>
               </div>
@@ -341,7 +450,8 @@ export function Home() {
         </div>
 
         <a className="outline" href="/reels">
-          Ver los 6 reels
+          <span className="reels-link-desktop">Más Reels</span>
+          <span className="reels-link-mobile">Más Reels</span>
           <Icon name="arrow" />
         </a>
       </section>
@@ -417,9 +527,14 @@ export function Home() {
 
       </footer>
       <div className={`whatsapp-float ${footerVisible ? 'footer-visible' : ''}`}>
-        <button aria-label="WhatsApp">
+        <a
+          href="https://wa.me/573136249756"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Contactar por WhatsApp"
+        >
           <Icon name="whatsapp" />
-        </button>
+        </a>
       </div>
     </main>
   )
