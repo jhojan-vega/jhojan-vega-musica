@@ -1,35 +1,36 @@
 # Jhojan Vega Música
 
-Esqueleto técnico inicial del catálogo musical. La aplicación pública y el panel administrativo están separados, pero se despliegan juntos mediante Docker Compose.
+Sitio web público del catálogo musical de Jhojan Vega. Es una aplicación ligera construida con React, Vite y TypeScript, publicada mediante Docker y Nginx.
 
 ## Arquitectura
 
-- `apps/public-web`: catálogo público React + Vite + TypeScript.
-- `apps/admin-web`: punto de entrada privado React + Vite + TypeScript, publicado en `/admin/`.
-- `services/api`: API Node.js + Fastify. Por ahora expone únicamente `GET /health`.
-- `packages/shared-types`: tipos TypeScript compartidos, sin lógica de negocio.
-- `infra/nginx`: proxy inverso y entrega de archivos multimedia públicos.
-- PostgreSQL y el almacenamiento multimedia se ejecutan como volúmenes persistentes de Docker.
+La arquitectura está simplificada para servir únicamente el sitio público:
 
-## Multimedia inicial
+- `apps/public-web`: aplicación pública React + Vite + TypeScript.
+- `infra/nginx`: configuración de Nginx como punto de entrada y servidor de multimedia.
+- `infra/docker/media/initial`: estructura de contenido inicial para el volumen de medios.
+- `docker-compose.yml`: levanta los servicios `public-web`, `media-init` y `nginx`.
 
-Antes del primer despliegue, los archivos iniciales pueden situarse en:
+## Multimedia
 
-```text
-infra/docker/media/initial/public/images/
-infra/docker/media/initial/public/mp3/
-infra/docker/media/initial/public/reels/
-```
+La multimedia pesada se sirve mediante la ruta `/media/` desde el volumen Docker `media-data`.
 
-El servicio `media-init` los copia al volumen persistente **solo si está vacío**. Después del primer despliegue, los nuevos archivos deberán llegar mediante el futuro panel `/admin`; el contenido existente no se sobrescribe al reiniciar contenedores.
+`media-init` copia el contenido de `infra/docker/media/initial/` al volumen únicamente cuando este está vacío. Esto permite conservar los medios entre recreaciones de contenedores.
+
+Los MP3 actuales del catálogo público se sirven desde `/audio/`, a partir de `apps/public-web/public/audio/`.
 
 ## Inicio local
 
-1. Copia `.env.example` como `.env` y ajusta las variables locales.
-2. Instala las dependencias: `npm install`.
-3. Inicia las aplicaciones de desarrollo con `npm run dev` o la API con `npm run dev:api`.
-4. Para el conjunto de contenedores: `docker compose up --build`.
+Para construir y levantar el sitio:
 
-Con Docker, el proxy queda disponible en `http://localhost:8080` por defecto; `/admin/` y `/api/health` se encaminan a sus respectivos servicios.
+```bash
+docker compose up -d --build
+```
 
-No hay aún autenticación, CRUD, migraciones, carga de archivos, procesamiento multimedia ni diseño definitivo. El despliegue inicial en el VPS será manual; GitHub Actions no forma parte de esta fase.
+El sitio queda disponible en [http://localhost:8080](http://localhost:8080).
+
+Si se requiere un puerto distinto, se puede crear un archivo `.env` con `HTTP_PORT`.
+
+## Preparación para VPS
+
+El despliegue final se realizará en un VPS con Docker y Docker Compose. Antes del primer arranque, verifica que la multimedia destinada al volumen `media-data` esté disponible en el servidor, ya que los archivos pesados se mantienen separados de la aplicación pública cuando es posible.
