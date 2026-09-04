@@ -198,6 +198,10 @@ footer,
         0 0 18px #8d4dcc33;
 }
 
+.responsive-socials {
+    display: none;
+}
+
 footer aside a svg {
     width: 33px;
     height: 33px;
@@ -2134,6 +2138,28 @@ footer aside {
 }
 
 @media (max-width: 800px) {
+    .videos-hero {
+        position: relative;
+    }
+
+    .videos-hero h1 {
+        transform: translateY(-10px);
+    }
+
+    .videos-page .videos-responsive-socials {
+        position: absolute;
+        top: 2px;
+        right: 8px;
+        left: auto;
+        display: flex;
+        width: max-content;
+        max-width: calc(100% - 16px);
+        flex-wrap: nowrap;
+        gap: clamp(8px, 3vw, 34px);
+        padding-left: 0;
+        border-left: 0;
+    }
+
     .videos-page::before {
         top: -27px;
         left: calc(min(22vw, 290px) + 130px);
@@ -2327,6 +2353,28 @@ footer aside {
 .reels-whatsapp { right: 24px; bottom: 72px; }
 
 @media (max-width: 900px) {
+    .reels-hero {
+        position: relative;
+    }
+
+    .reels-hero h1 {
+        transform: translateY(-10px);
+    }
+
+    .reels-page .reels-responsive-socials {
+        position: absolute;
+        top: 2px;
+        right: 8px;
+        left: auto;
+        display: flex;
+        width: max-content;
+        max-width: calc(100% - 16px);
+        flex-wrap: nowrap;
+        gap: clamp(8px, 3vw, 34px);
+        padding-left: 0;
+        border-left: 0;
+    }
+
     .reels-page-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
@@ -2763,6 +2811,30 @@ header {
 .audios-whatsapp:hover {
     transform: scale(1.08);
     box-shadow: 0 8px 25px #00000070;
+}
+
+@media (max-width: 800px) {
+    .audios-heading {
+        position: relative;
+    }
+
+    .audios-heading .audios-title {
+        transform: translateY(-40px) rotate(-1deg);
+    }
+
+    .audios-page .audios-responsive-socials {
+        position: absolute;
+        top: clamp(24px, calc(8vw - 30px), 34px);
+        right: 8px;
+        left: auto;
+        display: flex;
+        width: max-content;
+        max-width: calc(100% - 16px);
+        flex-wrap: nowrap;
+        gap: clamp(8px, 3vw, 34px);
+        padding-left: 0;
+        border-left: 0;
+    }
 }
 
 @media (max-width: 680px) {

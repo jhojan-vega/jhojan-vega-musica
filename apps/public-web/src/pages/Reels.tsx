@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { ResponsiveSocials } from '../components/ResponsiveSocials'
 
 const reels = [
   { id: '01', title: 'DESPECHO', file: '/media/reels/01 DESPECHO.mp4', cover: '/images/reels/01 R CARATULA.jpg' },
@@ -36,7 +37,7 @@ export function Reels() {
   return (
     <main className="reels-page">
       <div className="reels-musical-pattern" aria-hidden="true" />
-      <section className="reels-hero"><h1>Reels</h1></section>
+      <section className="reels-hero"><h1>Reels</h1><ResponsiveSocials className="reels-responsive-socials" /></section>
       <section className="reels-content" aria-label="Reels de Jhojan Vega">
         <div className="reels-page-grid">
           {reels.map((reel) => {

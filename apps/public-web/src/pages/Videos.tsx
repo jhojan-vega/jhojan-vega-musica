@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { ResponsiveSocials } from '../components/ResponsiveSocials'
 
 const videos = [
   { title: 'LA LEY DE LA VIDA', youtube: 'https://youtu.be/8EE6pGTmW1A?si=Un15cP8e0YR5drJh', id: '8EE6pGTmW1A' },
@@ -97,6 +98,7 @@ export function Videos() {
       <div className="videos-musical-pattern" aria-hidden="true" />
       <section className="videos-hero">
         <h1>Videos</h1>
+        <ResponsiveSocials className="videos-responsive-socials" />
       </section>
       <section className="videos-content" aria-label="Videos de Jhojan Vega">
         <div className="videos-grid">

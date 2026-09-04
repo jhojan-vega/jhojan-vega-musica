@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { ResponsiveSocials } from '../components/ResponsiveSocials'
 
 const audios = [
   { title: 'LA LEY DE LA VIDA', cover: '/images/covers/01 LA LEY DE LA VIDA .png', file: '/audio/01 LA LEY DE LA VIDA  .mp3' },
@@ -70,6 +71,7 @@ export function Audios() {
         <div className="heading audios-heading">
           <img className="audios-brand" src="/images/MARCA.png" alt="Jhojan Vega MÃºsica" />
           <h1 className="audios-title">Mis mejores<br />canciones</h1>
+          <ResponsiveSocials className="audios-responsive-socials" />
           
           <h1>Mi música</h1>
           <span>
